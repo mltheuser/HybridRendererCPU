@@ -1,5 +1,6 @@
 #include <math.h>
 
+#include <chrono>
 #include <fstream>
 #include <iostream>
 
@@ -28,20 +29,19 @@ bool to_image(Buffer<int, char>& frame_buffer, const std::string& path) {
 }
 
 int main() {
-  Mesh cube = Mesh("../../src/models/cube.obj");
-  cube.scale({1, 2, 1});
+  Mesh cube = Mesh("../../src/models/bunny.obj");
+  cube.scale({20, 20, 20});
   cube.translate({0, 0, -20});
   cube.rotate(0, 45, 0);
 
-  Mesh ground_plane =
-      Mesh("../../src/models/cube.obj");
+  Mesh ground_plane = Mesh("../../src/models/cube.obj");
   ground_plane.scale({2.5, 0.1, 2.5});
   ground_plane.translate({0, 2.4, -20});
 
   DirectionalLight dir_light = DirectionalLight(
-      Vector<3>({-0.5, -1.0, 0}), Vector<3>({1.0, 0.5, 0.0}), 6.0, true);
+      Vector<3>({-0.5, -1.0, 0}), Vector<3>({1.0, 0.5, 0.0}), 40.0, true);
   DirectionalLight dir_light_2 = DirectionalLight(
-      Vector<3>({0.5, -1.0, 0}), Vector<3>({0.0, 0.5, 1.0}), 6.0, true);
+      Vector<3>({0.5, -1.0, 0}), Vector<3>({0.0, 0.5, 1.0}), 50.0, true);
   std::vector<Light*> lights = {&dir_light, &dir_light_2};
 
   Camera camera = Camera();
@@ -55,14 +55,18 @@ int main() {
   float rot_per_frame = 360.f / num_frames_for_rotation;
   for (int i = 0; i < num_frames_for_rotation; ++i) {
     frame_buffer.reset();
+    auto t_start = std::chrono::high_resolution_clock::now();
     Rasterizer::render(frame_buffer, camera, meshes, lights);
-    float rotation = rot_per_frame * (i+1);
+    auto t_end = std::chrono::high_resolution_clock::now();
+    float rotation = rot_per_frame * (i + 1);
     cube.rotate(0, -rot_per_frame, 0);
     float translation = sin(degrees_to_radians(2 * rotation));
     cube.translate(
         {0, -cube.local_to_world_mat_(3, 1) + 0.3f * translation, 0});
-    std::string frame_name = "../../src/image" +
-                             std::to_string(i) + ".ppm";
+    std::string frame_name = "../../src/image" + std::to_string(i) + ".ppm";
     to_image(frame_buffer, frame_name);
+
+    auto s_int = duration_cast<std::chrono::seconds>(t_end - t_start);
+    std::cout << s_int.count() << "s\n";
   }
 }

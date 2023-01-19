@@ -27,7 +27,7 @@ render_lib/raytracer.cc
 
 add_executable(graphic main.cpp)
 
-target_link_libraries(render_lib geo_lib)
+target_link_libraries(render_lib geo_lib pthread)
 target_link_libraries(graphic render_lib)
 
 

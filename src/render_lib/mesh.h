@@ -2,6 +2,8 @@
 
 #include "inhabitant.h"
 
+#include <string>
+
 class Mesh : public Inhabitant {
  public:
   Mesh(std::vector<Vector<3> > vertices, std::vector<Vector<2> > uvs,
