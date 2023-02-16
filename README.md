@@ -1,4 +1,4 @@
-# HybridRendererCPU
+# HybridRenderer
 
 A hybrid CPU renderer using rasterization for visibility and ray tracing for shadows. <br />
 Written from scratch in modern C++ and tested with GoogleTest.
